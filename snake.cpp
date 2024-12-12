@@ -14,7 +14,6 @@ namespace internal
   // 💀💀💀💀💀💀💀💀 DON'T TOUCH THIS BLOCK 💀💀💀💀💀💀💀💀💀 ///
   int keyEvent();
   void frameSleep(const int &ms);
-  const char *cmd_clear = "clear";
   void backgroundClear();
   void printFrame(const int &nx, const int &ny, const std::vector<int> &bg);
   void createFood(std::vector<int> &bg, std::array<int, 2> &food, const int &nx, const int &ny);
@@ -54,21 +53,53 @@ std::vector<int> backgroundSetup(const int &nx, const int &ny)
 void add_snake(const std::vector<std::pair<int, int>> &snake, std::vector<int> &bg, int nx, int ny)
 {
   // 👉️ Your code here 👈️
+  for (int i = 0; i < snake.size(); i++)
+  {
+    bg[snake[i].second * nx + snake[i].first] = 3;
+  }
 }
 
 void remove_snake(const std::vector<std::pair<int, int>> &snake, std::vector<int> &bg, int nx, int ny)
 {
   // 👉️ Your code here 👈️
+  for (int i = 0; i < snake.size(); i++)
+  {
+    bg[snake[i].second * nx + snake[i].first] = 0;
+  }
 }
 
 std::array<int, 2> snake_movement(char key)
 {
   // 👉️ Your code here 👈️
+  std::array<int, 2> dxdy = {0, 0};
+  if (key == 'z')
+  {
+    dxdy = {0, -1};
+  }
+  else if (key == 's')
+  {
+    dxdy = {0, 1};
+  }
+  else if (key == 'q')
+  {
+    dxdy = {-1, 0};
+  }
+  else if (key == 'd')
+  {
+    dxdy = {1, 0};
+  }
+  return dxdy;
 }
 
 bool verifyBorder(const std::vector<std::pair<int, int>> &snake, int nx, int ny)
 {
   // 👉️ Your code here 👈️
+  auto head = snake[0];
+  if (head.first == 0 || head.first == nx - 1 || head.second == 0 || head.second == ny - 1)
+  {
+    return false;
+  }
+  return true;
 }
 
 std::vector<std::pair<int, int>> setupSnake(int snake_len)
@@ -86,6 +117,16 @@ std::vector<std::pair<int, int>> setupSnake(int snake_len)
 void update_snake_coordinates(std::vector<std::pair<int, int>> &snake, bool eat, std::array<int, 2> dxdy)
 {
   // 👉️ Your code here 👈️
+  if (eat)
+  {
+    snake.push_back(snake[snake.size() - 1]);
+  }
+  for (int i = snake.size() - 1; i > 0; i--)
+  {
+    snake[i] = snake[i - 1];
+  }
+  snake[0].first += dxdy[0];
+  snake[0].second += dxdy[1];
 }
 
 void startGame(const int &lap, const int &nx, const int &ny, std::vector<std::pair<int, int>> &snake, std::vector<int> &bg)
@@ -123,6 +164,7 @@ void startGame(const int &lap, const int &nx, const int &ny, std::vector<std::pa
 
 int main()
 {
+  std::cout << "Welcome to the snake game" << std::endl;
   const int nx = 50;
   const int ny = 25;
   const int lap = 200;
@@ -144,6 +186,8 @@ namespace internal
 
   static const int STDIN = 0;
   static bool initialized = false;
+
+  const char *cmd_clear = "clear";
 
   // Comment ca va
 
